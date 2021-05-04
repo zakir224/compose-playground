@@ -1,11 +1,12 @@
 package com.learn.composesample
 
 data class Vehicle (
-        var make: String,
-        var model: String,
-        var year: String,
-        var listPrice: Float,
-        var firstPhoto: String?
+        val make: String,
+        val model: String,
+        val year: String,
+        val listPrice: Float,
+        val followed: Boolean = false,
+        val id: Int
         )
 
 

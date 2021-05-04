@@ -9,10 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,7 +41,11 @@ class MainActivity : ComponentActivity() {
                 ActionBar(name = "Vehicle")
                 LazyColumn(Modifier.fillMaxWidth()) {
                     items(observeAsState.value) { vehicle ->
-                        VehicleInfo(vehicle = vehicle) { model.removeVehicle(vehicle = vehicle) }
+                        VehicleInfo(
+                            vehicle = vehicle,
+                            { model.removeVehicle(vehicle = vehicle) },
+                            { model.followVehicle(vehicle = vehicle) }
+                        )
                     }
                 }
             }
@@ -57,29 +58,43 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun VehicleInfo(vehicle: Vehicle, onRemoveClick: () -> Unit) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            val typography = MaterialTheme.typography
-            Image(
-                painter = painterResource(id = R.drawable.header),
-                contentDescription = null,
-                modifier = Modifier
-                    .height(180.dp)
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(4.dp)),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                "${vehicle.make} ${vehicle.model} | ${vehicle.year}",
-                style = typography.h6,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(text = vehicle.listPrice.toString(), style = typography.h6)
-            Text("Manhattan, NY", style = typography.body1)
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = onRemoveClick) { Text("Remove") }
+    fun VehicleInfo(vehicle: Vehicle, onRemoveClick: () -> Unit, onFollowClick: () -> Unit) {
+        Card(elevation = 4.dp, modifier = Modifier.padding(8.dp)) {
+            Column(Modifier.padding(8.dp)) {
+                val typography = MaterialTheme.typography
+                Image(
+                    painter = painterResource(id = R.drawable.hondasample),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(180.dp)
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(4.dp)),
+                    contentScale = ContentScale.Crop
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    "${vehicle.make} ${vehicle.model} ${vehicle.year}",
+                    style = typography.h6,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(text = vehicle.listPrice.toString(), style = typography.h6)
+                Text("Manhattan, NY", style = typography.body1)
+                Spacer(modifier = Modifier.height(8.dp))
+                ActionRow(vehicle.followed, onRemoveClick, onFollowClick)
+            }
+        }
+    }
+
+    @Composable
+    fun ActionRow(followed: Boolean, onRemoveClick: () -> Unit, onFollowClick: () -> Unit) {
+        Row {
+            Button(onClick = onRemoveClick, Modifier.weight(1f)) { Text("Remove") }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(onClick = onFollowClick, Modifier.weight(1f)) {
+                if(followed.not()) Text("Follow")
+                else Text(text = "Unfollow")
+            }
         }
     }
 
