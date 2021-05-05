@@ -117,7 +117,19 @@ class MainActivity : ComponentActivity() {
 
     @Preview
     @Composable
-    fun PreviewGreeting() {
-        VehicleDetailsPage()
+    fun PreviewActionRow() {
+        ActionRow(true, {}, {})
+    }
+
+    @Preview
+    @Composable
+    fun PreviewActionBar() {
+        ActionBar("Action Bar")
+    }
+    
+    @Preview
+    @Composable
+    fun PreviewVehicle() {
+        VehicleInfo(Vehicle(make = "Honda", model = "Accord", year = "2001",listPrice = 45000f, id= 1), {}, {})
     }
 }
