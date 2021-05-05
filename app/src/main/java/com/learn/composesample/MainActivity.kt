@@ -37,24 +37,29 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun VehicleDetailsPage() {
-        var removedCount by remember { mutableStateOf(0) }
-        val vehicles = model.vehicle.observeAsState(emptyList())
+        val vehicles = model.vehicle.observeAsState(emptyList()).value
         MaterialTheme {
             Column {
                 ActionBar(name = "Vehicle")
-                RemovedVehicleCount(count = removedCount)
-                LazyColumn(Modifier.fillMaxWidth()) {
-                    items(vehicles.value) { vehicle ->
-                        VehicleInfo(
-                            vehicle = vehicle,
-                            {
-                                removedCount++
-                                model.removeVehicle(vehicle = vehicle)
-                            },
-                            { model.followVehicle(vehicle = vehicle) }
-                        )
-                    }
-                }
+                VehicleList(vehicles)
+            }
+        }
+    }
+
+    @Composable
+    fun VehicleList(vehicles: List<Vehicle>) {
+        var removedCount by remember { mutableStateOf(0) }
+        RemovedVehicleCount(count = removedCount)
+        LazyColumn(Modifier.fillMaxWidth()) {
+            items(vehicles) { vehicle ->
+                VehicleInfo(
+                    vehicle = vehicle,
+                    {
+                        removedCount++
+                        model.removeVehicle(vehicle = vehicle)
+                    },
+                    { model.followVehicle(vehicle = vehicle) }
+                )
             }
         }
     }
@@ -62,7 +67,10 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun RemovedVehicleCount(count: Int) {
         if(count > 0) {
-            Text(text = "Removed $count vehicles!", Modifier.padding(8.dp).fillMaxWidth(), textAlign = TextAlign.Center)
+            Text(text = "Removed $count vehicles!",
+                Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(), textAlign = TextAlign.Center)
         }
     }
 
@@ -126,7 +134,7 @@ class MainActivity : ComponentActivity() {
     fun PreviewActionBar() {
         ActionBar("Action Bar")
     }
-    
+
     @Preview
     @Composable
     fun PreviewVehicle() {
