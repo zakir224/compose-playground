@@ -5,12 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -19,6 +20,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+
 
 class MainActivity : ComponentActivity() {
 
@@ -34,21 +38,32 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun VehicleDetailsPage() {
-
+        var showSnackBar by remember { mutableStateOf(0) }
         val observeAsState = model.vehicle.observeAsState(emptyList())
         MaterialTheme {
             Column {
                 ActionBar(name = "Vehicle")
+                RemovedVehicleCount(count = showSnackBar)
                 LazyColumn(Modifier.fillMaxWidth()) {
                     items(observeAsState.value) { vehicle ->
                         VehicleInfo(
                             vehicle = vehicle,
-                            { model.removeVehicle(vehicle = vehicle) },
+                            {
+                                showSnackBar++
+                                model.removeVehicle(vehicle = vehicle)
+                            },
                             { model.followVehicle(vehicle = vehicle) }
                         )
                     }
                 }
             }
+        }
+    }
+
+    @Composable
+    fun RemovedVehicleCount(count: Int) {
+        if(count > 0) {
+            Text(text = "Removed $count vehicles!", Modifier.padding(8.dp).fillMaxWidth(), textAlign = TextAlign.Center)
         }
     }
 
@@ -91,8 +106,11 @@ class MainActivity : ComponentActivity() {
         Row {
             Button(onClick = onRemoveClick, Modifier.weight(1f)) { Text("Remove") }
             Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = onFollowClick, Modifier.weight(1f)) {
-                if(followed.not()) Text("Follow")
+            Button(
+                onClick = onFollowClick, Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(backgroundColor = if (followed) Color.Green else MaterialTheme.colors.primary)
+            ) {
+                if (followed.not()) Text("Follow")
                 else Text(text = "Unfollow")
             }
         }
