@@ -37,18 +37,18 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun VehicleDetailsPage() {
-        var showSnackBar by remember { mutableStateOf(0) }
+        var removedCount by remember { mutableStateOf(0) }
         val vehicles = model.vehicle.observeAsState(emptyList())
         MaterialTheme {
             Column {
                 ActionBar(name = "Vehicle")
-                RemovedVehicleCount(count = showSnackBar)
+                RemovedVehicleCount(count = removedCount)
                 LazyColumn(Modifier.fillMaxWidth()) {
                     items(vehicles.value) { vehicle ->
                         VehicleInfo(
                             vehicle = vehicle,
                             {
-                                showSnackBar++
+                                removedCount++
                                 model.removeVehicle(vehicle = vehicle)
                             },
                             { model.followVehicle(vehicle = vehicle) }
