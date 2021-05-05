@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -39,13 +38,13 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun VehicleDetailsPage() {
         var showSnackBar by remember { mutableStateOf(0) }
-        val observeAsState = model.vehicle.observeAsState(emptyList())
+        val vehicles = model.vehicle.observeAsState(emptyList())
         MaterialTheme {
             Column {
                 ActionBar(name = "Vehicle")
                 RemovedVehicleCount(count = showSnackBar)
                 LazyColumn(Modifier.fillMaxWidth()) {
-                    items(observeAsState.value) { vehicle ->
+                    items(vehicles.value) { vehicle ->
                         VehicleInfo(
                             vehicle = vehicle,
                             {
