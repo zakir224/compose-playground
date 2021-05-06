@@ -31,17 +31,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            VehicleDetailsPage()
+            VehicleListScreen()
         }
     }
 
     @Composable
-    fun VehicleDetailsPage() {
-        val vehicles = model.vehicle.observeAsState(emptyList()).value
+    fun VehicleListScreen() {
+        val vehicleListScreenState = model.vehicle.observeAsState(emptyList()).value
         MaterialTheme {
             Column {
                 ActionBar(name = "Vehicle")
-                VehicleList(vehicles)
+                VehicleList(vehicleListScreenState)
             }
         }
     }
@@ -51,14 +51,14 @@ class MainActivity : ComponentActivity() {
         var removedCount by remember { mutableStateOf(0) }
         RemovedVehicleCount(count = removedCount)
         LazyColumn(Modifier.fillMaxWidth()) {
-            items(vehicles) { vehicle ->
+            items(vehicles) { vehicleState ->
                 VehicleInfo(
-                    vehicle = vehicle,
+                    vehicleState = vehicleState,
                     {
                         removedCount++
-                        model.removeVehicle(vehicle = vehicle)
+                        model.removeVehicle(vehicle = vehicleState)
                     },
-                    { model.followVehicle(vehicle = vehicle) }
+                    { model.followVehicle(vehicle = vehicleState) }
                 )
             }
         }
@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun VehicleInfo(vehicle: Vehicle, onRemoveClick: () -> Unit, onFollowClick: () -> Unit) {
+    fun VehicleInfo(vehicleState: Vehicle, onRemoveClick: () -> Unit, onFollowClick: () -> Unit) {
         Card(elevation = 4.dp, modifier = Modifier.padding(8.dp)) {
             Column(Modifier.padding(8.dp)) {
                 val typography = MaterialTheme.typography
@@ -95,29 +95,29 @@ class MainActivity : ComponentActivity() {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "${vehicle.make} ${vehicle.model} ${vehicle.year}",
+                    "${vehicleState.make} ${vehicleState.model} ${vehicleState.year}",
                     style = typography.h6,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text(text = vehicle.listPrice.toString(), style = typography.h6)
+                Text(text = vehicleState.listPrice.toString(), style = typography.h6)
                 Text("Manhattan, NY", style = typography.body1)
                 Spacer(modifier = Modifier.height(8.dp))
-                ActionRow(vehicle.followed, onRemoveClick, onFollowClick)
+                ActionRow(vehicleState.followed, onRemoveClick, onFollowClick)
             }
         }
     }
 
     @Composable
-    fun ActionRow(followed: Boolean, onRemoveClick: () -> Unit, onFollowClick: () -> Unit) {
+    fun ActionRow(followedState: Boolean, onRemoveClick: () -> Unit, onFollowClick: () -> Unit) {
         Row {
             Button(onClick = onRemoveClick, Modifier.weight(1f)) { Text("Remove") }
             Spacer(modifier = Modifier.width(8.dp))
             Button(
                 onClick = onFollowClick, Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(backgroundColor = if (followed) Color.Green else MaterialTheme.colors.primary)
+                colors = ButtonDefaults.buttonColors(backgroundColor = if (followedState) Color.Green else MaterialTheme.colors.primary)
             ) {
-                if (followed.not()) Text("Follow")
+                if (followedState.not()) Text("Follow")
                 else Text(text = "Unfollow")
             }
         }
