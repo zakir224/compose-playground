@@ -131,6 +131,12 @@ class MainActivity : ComponentActivity() {
 
     @Preview
     @Composable
+    fun PreviewRemovedVehicleCount() {
+        RemovedVehicleCount(2)
+    }
+
+    @Preview
+    @Composable
     fun PreviewActionBar() {
         ActionBar("Action Bar")
     }
