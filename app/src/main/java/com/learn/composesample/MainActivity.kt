@@ -100,7 +100,7 @@ class MainActivity : ComponentActivity() {
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text(text = vehicleState.listPrice.toString(), style = typography.h6)
+                Text(text = "$${vehicleState.listPrice}", style = typography.h6)
                 Text("Manhattan, NY", style = typography.body1)
                 Spacer(modifier = Modifier.height(8.dp))
                 ActionRow(vehicleState.followed, onRemoveClick, onFollowClick)
